@@ -6,7 +6,7 @@ function mostrar_menu() {
   echo "2) Revertir un numero"
   echo "3) Palindromos"
   echo "4) Cantidad de lineas de archivo"
-  echo "5) "
+  echo "5) Ordenar numeros"
   echo "6) "
   echo "7) Salir"
 }
@@ -57,19 +57,20 @@ while true; do
           fi
         done
 
-        echo "Palindromo: ${palidrome}"
-
-        ;;
+        if [[ $palidrome -eq 1 ]]; then
+          echo " Es palindromo"
+        else
+          echo "No es palidromo"
+        fi;;
 
     4) echo "Ingrese el path de un archivo: "
         read file
         echo "Cantidad de lineas del archivo: "
         echo `wc -l ${file}`;;
 
-    # TODO
     5) echo "Ingrese 5 numeros enteros: "
-
-        ;;
+        read -r first second third fourth fifth
+        echo `echo -e "${first}\n${second}\n${third}\n${fourth}\n${fifth}" | sort -n`;;
 
     # TODO
     6) echo "Ingrese el path a un directorio: "
