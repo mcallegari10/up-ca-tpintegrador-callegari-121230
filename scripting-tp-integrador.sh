@@ -40,9 +40,9 @@ while true; do
         read num
         echo `echo ${num} | rev`;;
 
-    # TODO: Sacar los espacios para soportar oraciones
     3) echo "Ingrese una cadena de caracteres: "
         read string_to_eval
+        string_to_eval=`echo "${string_to_eval}" | sed 's/ //g'`
         palidrome=0
 
         for ((i=0; i<${#string_to_eval}; i++)); do
