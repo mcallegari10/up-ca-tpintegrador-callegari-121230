@@ -7,7 +7,7 @@ function mostrar_menu() {
   echo "3) Palindromos"
   echo "4) Cantidad de lineas de archivo"
   echo "5) Ordenar numeros"
-  echo "6) "
+  echo "6) Tipos de archivos en path"
   echo "7) Salir"
 }
 
@@ -72,12 +72,30 @@ while true; do
         read -r first second third fourth fifth
         echo `echo -e "${first}\n${second}\n${third}\n${fourth}\n${fifth}" | sort -n`;;
 
-    # TODO
     6) echo "Ingrese el path a un directorio: "
+        read path
+        common=0
+        file_types=`ls -la ${path} | cut -c 1 | tail -n +2`
+        
+        for type in $file_types; do
+          count=`echo "$file_types" | grep -c ${type}`
+          if [[ $type == "-" ]]; then
+            common=$count
+          else
+            printf -v "${type}" "%s" ${count}
+          fi
+        done
 
-        ;;
+        echo "Tipos de archivos: "
+        echo "Comunes: ${common}"
+        echo "Directorios: ${d}"
+        echo "Links: ${l}"
+        echo "Dispositivos de caracteres: ${c}"
+        echo "Bloques: ${b}"
+        echo "Pipes: ${p}"
+        echo "Sockets: ${s}";;
 
-    7) salir_saludando
+    7) salir_saludando `whoami`
         break;;
 
     *) echo "Opcion incorrecta";;
