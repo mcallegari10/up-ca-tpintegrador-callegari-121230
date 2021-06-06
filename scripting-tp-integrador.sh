@@ -58,7 +58,7 @@ while true; do
         done
 
         if [[ $palidrome -eq 1 ]]; then
-          echo " Es palindromo"
+          echo "Es palindromo"
         else
           echo "No es palidromo"
         fi;;
