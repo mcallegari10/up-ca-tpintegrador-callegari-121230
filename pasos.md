@@ -86,7 +86,7 @@ Creo el cron job con el comando `crontab -e`, agregando una linea que indica que
 ([guia](https://vitux.com/how-to-setup-a-cron-job-in-debian-10/))
 
 Para poder guardar los archivos con rsync, cambie los permisos de /media/disco_backups para que tenga acceso el rsync.
-Agrego tambien las keys de ssh para que no pregunte por la contraseña cada vez que se ejecute el archivo.
+Agrego tambien las keys de ssh para que no pregunte por la contraseña cada vez que se ejecute el archivo, utilizando el ssh-agent tanto en cliente como servidor.
 
 ## Cliente-03
 
