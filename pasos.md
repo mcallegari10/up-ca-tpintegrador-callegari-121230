@@ -115,3 +115,5 @@ Aplicaria LVM en el FIle Server para poder agregar más discos de backup en caso
 - Cambio en el archivo /etc/fstab el UUID por el nuevo generado para el filesystem
 - Vuelvo a montar el disco y le doy permisos de ejecucion para que el rsync funcione
 - Con el comando `sudo vgdisplay` puedo ver el Volume Group creado
+
+[guia de LVM](https://howto.biapy.com/en/debian-gnu-linux/system/setup/setup-and-use-the-logical-volume-manager-lvm-on-debian)
