@@ -20,22 +20,33 @@ iptables -A INPUT -i lo -j ACCEPT
 iptables -A OUTPUT -o lo -j ACCEPT
 ```
 
-Agrego la dirección ip del cliente 02 para que pueda comunicarse con el firewall con el comando:
-
-`iptables -A INPUT -p tcp --dport 22 --source 192.168.20.2 -j ACCEPT`
-
-Agrego la direccion del cliente 03 para que tenga acceso a internet, haciendo que acepte el input y output de la ip
+Agrego la dirección ip del cliente 02 para que pueda comunicarse con el firewall con los comandos:
 
 ```
-iptables -A INPUT -s 192.168.20.3 -j ACCEPT
-iptables -A OUTPUT -d 192.168.20.3 -j ACCEPT
+iptables -A INPUT -m state --state NEW,ESTABLISHED,RELATED --source 192.168.20.2 -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -m state --state NEW,ESTABLISHED,RELATED -p tcp --dport 22 -j DROP
+iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 ```
 
-Ademas, agrego la configuracion de nat para que pueda tener acceso a internet
+Siendo el primero para aceptar la conexion ssh desde el cliente-02, el segundo para bloquear el resto de las conexiones y el ultimo habilita las respuestas del firewall al cliente-02 una vez establecida la conexion.
+
+Para que el cliente 03 tenga acceso a internet, primero agrego el nateo de la red enp0s3 para que pueda hacer postrouting de las conexiones, despues agrego el FORWARD desde y hacia la ip del cliente 03 y la red enp0s3 (que es la dhcp). Los comandos son:
 
 ```
-iptables -t nat -A POSTROUTING -o 192.168.20.3 -j MASQUERADE
+iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
+iptables -A FORWARD -i enp0s3 -d 192.168.20.3 -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i enp0s9 -s 192.168.20.3 –o enp0s3 -j ACCEPT
 ```
+
+Ademas, en el cliente 03 agrego como ruta default la ip 192.168.20.1 con el comando:
+
+```
+ip route add default via 192.168.20.1
+```
+O agregado el gateway en el archivo de configuracion de ubuntu.
+
+
+
 
 Para que pueda comunicarse el cliente-04 con el webserver, agrego la regla:
 
@@ -96,4 +107,11 @@ Instalo Ubuntu 20.04 LTS y agrego openssh-server para poder conectarme desde el 
 
 Aplicaria LVM en el FIle Server para poder agregar más discos de backup en caso de quererlo. De esta forma el LVM se encargaria de administrar los backups de los archivos e incluso podria agregarle más seguridad al encriptarlo. Solo haría que los backups pertenezcan al LVM ya que no es necesario que el OS tambien este dentro del volumen en este caso.
 
-(No llego a implementar ya que los comandos en la guia formatean el disco ya instalado)
+- Desmonto el disco en /media/disco_backups `umount /media/disco_backups`
+- Creo el Physical Volume con el comando `sudo pvcreate /dev/sdb1`
+- Creo el Volume Group con `sudo vgcreate vhd1 /dev/sdb1`
+- Creo el Logical Volume con `sudo lvcreate -n ext4-var -L 1020m vhd1`, siendo los ultimos 2 el tamaño del volume group (1020MiB) y el nombre del volume group
+- Agrego el file system al logical volume `sudo mkfs -t ext4 /dev/vhd1/ext4-var`
+- Cambio en el archivo /etc/fstab el UUID por el nuevo generado para el filesystem
+- Vuelvo a montar el disco y le doy permisos de ejecucion para que el rsync funcione
+- Con el comando `sudo vgdisplay` puedo ver el Volume Group creado
